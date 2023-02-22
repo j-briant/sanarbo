@@ -1,0 +1,287 @@
+---
+openapi: 3.0.3
+info:
+  title: Sanarbo OpenAPI Spec
+  description: OpenApi Specification for an API related to sanarbo (health of trees)
+  contact:
+    name: sanarbo API Team
+    url: https://goeland.io
+    email: sanarbo@goeland.io
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1
+servers:
+- url: https://api.goeland.io/sanarbo
+paths:
+  /trees:
+    get:
+      summary: List returns a list of trees
+      description: Returns the trees in an array
+      operationId: List
+      parameters:
+      - name: limit
+        in: query
+        description: maximum number of results to return
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: get List of trees response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TreeList'
+        "401":
+          description: Access token is missing or invalid
+        default:
+          description: unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - JWTAuth: []
+    post:
+      summary: Create will create a new tree
+      description: Creates a new tree
+      operationId: Create
+      requestBody:
+        description: Object to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tree'
+        required: true
+      responses:
+        "201":
+          description: Object creation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tree'
+        "401":
+          description: Access token is missing or invalid
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - JWTAuth: []
+  /trees/{treeId}:
+    get:
+      summary: Get will retrieve in backend all information about a specific treeId
+      description: Retrieve a specific tree
+      operationId: Get
+      parameters:
+      - name: treeId
+        in: path
+        description: Id of the tree
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: get tree successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tree'
+        "401":
+          description: Access token is missing or invalid
+        "404":
+          description: get trees response when treeId was not found
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - JWTAuth: []
+    put:
+      summary: Update allows to modify information about a specific treeId
+      description: Updates the status of a tree
+      operationId: Update
+      parameters:
+      - name: treeId
+        in: path
+        description: Id of the tree
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        description: informations related to the tree
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Tree'
+      responses:
+        "200":
+          description: put trees successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tree'
+        "401":
+          description: Access token is missing or invalid
+        "404":
+          description: put tree response when treeId was not found
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - JWTAuth: []
+    delete:
+      summary: Delete allows to delete a specific treeId
+      description: delete a tree
+      operationId: Delete
+      parameters:
+      - name: treeId
+        in: path
+        description: Id of the tree
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: delete tree successful no content
+        "401":
+          description: Access token is missing or invalid
+        "404":
+          description: delete tree response when treeId was not found
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - JWTAuth: []
+components:
+  schemas:
+    Tree:
+      required:
+      - create_time
+      - creator
+      - id
+      - is_active
+      - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          minLength: 2
+          type: string
+        description:
+          minLength: 2
+          type: string
+        external_id:
+          type: integer
+          format: int32
+        is_active:
+          type: boolean
+          default: true
+        inactivation_time:
+          type: string
+          format: date-time
+        inactivation_reason:
+          type: string
+        comment:
+          type: string
+        is_validated:
+          type: boolean
+          default: false
+        id_validator:
+          type: integer
+          format: int32
+        create_time:
+          type: string
+          format: date-time
+        creator:
+          type: integer
+          format: int32
+        last_modification_time:
+          type: string
+          format: date-time
+        last_modification_user:
+          type: integer
+          format: int32
+    TreeList:
+      required:
+      - create_time
+      - creator
+      - id
+      - is_active
+      - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          minLength: 2
+          type: string
+        description:
+          minLength: 2
+          type: string
+        external_id:
+          type: integer
+          format: int32
+        is_active:
+          type: boolean
+          default: true
+        creator:
+          type: integer
+          format: int32
+        create_time:
+          type: string
+          format: date-time
+    Error:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    JsonWebToken:
+      required:
+      - token
+      type: object
+      properties:
+        token:
+          type: string
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
