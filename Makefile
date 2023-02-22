@@ -55,7 +55,7 @@ run: check-env openapi-codegen
 ## build:	will compile your server app binary and place it in the bin sub-folder
 build: check-env clean test openapi-codegen
 	@echo "  >  Building your app binary inside bin directory..."
-	CGO_ENABLED=0 go build ${LDFLAGS} -a -o bin/$(APP_EXECUTABLE) cmd/$(APP_EXECUTABLE)/main.go
+	CGO_ENABLED=0 go build ${LDFLAGS} -a -o bin/$(APP_EXECUTABLE) cmd/$(APP_EXECUTABLE)/${APP_EXECUTABLE}.go
 
 .PHONY: test
 test:
