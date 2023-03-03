@@ -229,6 +229,8 @@ components:
         last_modification_user:
           type: integer
           format: int32
+        specific_attributes:
+          type: object
     TreeList:
       required:
       - create_time
