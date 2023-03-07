@@ -229,6 +229,11 @@ components:
         last_modification_user:
           type: integer
           format: int32
+         geom:
+          type: string
+          pattern: '^POINT\(([0-9]{6})(\.[0-9]+)? ([0-9]{6})(\.[0-9]+)?\)$'
+        specific_attributes:
+          type: object
     TreeList:
       required:
       - create_time
