@@ -2,8 +2,10 @@ package trees
 
 import (
 	"errors"
-	"github.com/lao-tseu-is-alive/go-cloud-k8s-common-libs/pkg/database"
+	"fmt"
 	"log"
+
+	"github.com/lao-tseu-is-alive/go-cloud-k8s-common-libs/pkg/database"
 )
 
 // Storage is an interface to different implementation of persistence for Trees
@@ -28,6 +30,8 @@ type Storage interface {
 	SearchTreesByName(pattern string) ([]*TreeList, error)
 	// IsTreeActive returns true if the object with the specified id has the is_active attribute set to true
 	IsTreeActive(id int32) bool
+
+	IsUserAdmin(id int32) bool
 }
 
 func GetStorageInstance(dbDriver string, db database.DB, l *log.Logger) (Storage, error) {
@@ -47,4 +51,8 @@ func GetStorageInstance(dbDriver string, db database.DB, l *log.Logger) (Storage
 		return nil, errors.New("unsupported DB driver type")
 	}
 	return store, nil
+}
+
+func GetErrorF(errMsg string, err error) error {
+	return fmt.Errorf("%s [%v]", errMsg, err)
 }
