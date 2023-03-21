@@ -33,13 +33,19 @@ package trees
 
 
 const (
+	/*
 	treesList = `
 	SELECT 	thi.idthing AS id, thi.name, thi.description, thi.isactive AS is_active, thi.idcreator AS creator, thi.datecreated AS create_time, null AS external_id
 	FROM thing thi
 	WHERE thi.idtypething=74
 	ORDER BY thi.idthing
 	LIMIT $1 OFFSET $2;`
+	*/
 
+	treesList = `
+	SELECT id, name, description, is_active, create_time, creator, external_id
+	FROM tree_mobile
+	LIMIT $1 OFFSET $2;`
 	/*
 	treesGet = `
 	SELECT 	thi.idthing AS id, 
