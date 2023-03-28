@@ -242,7 +242,7 @@ components:
           format: int32
         geom:
           type: string
-          pattern: '^POINT\(([0-9]{6})(\.[0-9]+)? ([0-9]{6})(\.[0-9]+)?\)$'
+          pattern: '^POINT\(([0-9]{7})(\.[0-9]+)? ([0-9]{7})(\.[0-9]+)?\)$'
         tree_attributes:
           $ref: '#/components/schemas/TreeAttributes'
         #specific_attributes:
