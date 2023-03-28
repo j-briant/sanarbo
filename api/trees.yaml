@@ -29,6 +29,15 @@ paths:
         schema:
           type: integer
           format: int32
+      - name: offset
+        in: query
+        description: number of rows to skip before beginning to return rows 
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
       responses:
         "200":
           description: get List of trees response
@@ -187,6 +196,8 @@ components:
       - id
       - is_active
       - name
+      - geom
+      - tree_attributes
       type: object
       properties:
         id:
@@ -231,9 +242,11 @@ components:
           format: int32
         geom:
           type: string
-          pattern: '^POINT\(([0-9]{6})(\.[0-9]+)? ([0-9]{6})(\.[0-9]+)?\)$'
-        specific_attributes:
-          type: object
+          pattern: '^POINT\(([0-9]{7})(\.[0-9]+)? ([0-9]{7})(\.[0-9]+)?\)$'
+        tree_attributes:
+          $ref: '#/components/schemas/TreeAttributes'
+        #specific_attributes:
+        #  type: object
     TreeList:
       required:
       - create_time
@@ -281,6 +294,20 @@ components:
       type: object
       properties:
         token:
+          type: string
+    TreeAttributes:
+      required:
+        - idvalidation
+      type: object
+      properties:
+        idvalidation:
+          type: integer
+          format: int32
+        entouragerem:
+          type: string
+        envracinairerem:
+          type: string
+        etatsanitairerem:
           type: string
   responses:
     UnauthorizedError:
