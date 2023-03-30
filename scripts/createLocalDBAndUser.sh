@@ -37,7 +37,7 @@ if DB_PASSWORD=$(openssl rand -base64 32); then
   echo "## Will try to create database ${DB_NAME} with owner=${DB_NAME}"
   su -c "createdb -O ${DB_NAME} ${DB_NAME}" postgres
   # uncomment next line to add postgis extension to the db
-  #su -c "psql -c 'CREATE EXTENSION postgis;' ${DB_NAME}" postgres
+  su -c "psql -c 'CREATE EXTENSION postgis;' ${DB_NAME}" postgres
   cd - || exit
   # https://www.freedesktop.org/software/systemd/man/systemd.service.html
   echo "## Will prepare a systemd unit conf file in current directory: ${APP_NAME}.conf"
