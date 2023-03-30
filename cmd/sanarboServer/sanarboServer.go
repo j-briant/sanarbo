@@ -7,9 +7,13 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/cristalhq/jwt/v4"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/pgx"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/labstack/echo/v4"
 	"github.com/lao-tseu-is-alive/go-cloud-k8s-common-libs/pkg/config"
 	"github.com/lao-tseu-is-alive/go-cloud-k8s-common-libs/pkg/database"
@@ -25,6 +29,7 @@ const (
 	defaultDBIp            = "127.0.0.1"
 	defaultDBSslMode       = "prefer"
 	defaultWebRootDir      = "sanarboFront/dist/"
+	defaultSqlDbMigrationsPath = "db/migrations"
 	defaultSecuredApi      = "/goapi/v1"
 	defaultUsername        = "bill"
 	defaultFakeStupidPass  = "board"
@@ -40,6 +45,12 @@ const (
 //
 //go:embed sanarboFront/dist/*
 var content embed.FS
+
+// sqlMigrations holds our db migrations sql files using https://github.com/golang-migrate/migrate
+// in the line above you SHOULD have the same path  as const defaultSqlDbMigrationsPath
+//
+//go:embed db/migrations/*.sql
+var sqlMigrations embed.FS
 
 var dbConn database.DB
 
@@ -162,6 +173,22 @@ func main() {
 		l.Fatalf("💥💥 error doing users.GetPgxConn(postgres, dbDsn  : %v\n", err)
 	}
 	defer dbConn.Close()
+
+// example of go-migrate db migration with embed files in go program
+// https://github.com/golang-migrate/migrate
+// https://github.com/golang-migrate/migrate/blob/master/database/postgres/TUTORIAL.md
+d, err := iofs.New(sqlMigrations, defaultSqlDbMigrationsPath)
+if err != nil {
+   l.Fatalf("💥💥 error doing iofs.New for db migrations  error: %v\n", err)
+}
+m, err := migrate.NewWithSourceInstance("iofs", d, strings.Replace(dbDsn, "postgres", "pgx", 1))
+if err != nil {
+   l.Fatalf("💥💥 error doing migrate.NewWithSourceInstance(iofs, dbURL:%s)  error: %v\n", dbDsn, err)
+}
+err = m.Up()
+if err != nil {
+   l.Fatalf("💥💥 error doing migrate.Up error: %v\n", err)
+}
 
 	yourService := ServiceExample{
 		Log:         l,
