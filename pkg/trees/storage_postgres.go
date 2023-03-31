@@ -41,7 +41,7 @@ func (P PGX) Get(id int32) (*Tree, error) {
 		P.log.Printf("error : Get(%d) pgxscan.Select unexpectedly failed, error : %v", id, err)
 		return nil, err
 	}
-	if res == nil {
+	if res == (&Tree{}) {
 		P.log.Printf("info : Get(%d) returned no results ", id)
 		return nil, errors.New("records not found")
 	}

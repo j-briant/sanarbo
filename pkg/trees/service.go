@@ -9,6 +9,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+const (
+	noAdminPrivilege = "current user has no admin privilege"
+)
+
 type Service struct {
 	Log         *log.Logger
 	Store       Storage
@@ -62,7 +66,7 @@ func (s Service) Create(ctx echo.Context) error {
 	// IF USER IS NOT ADMIN RETURN 401 Unauthorized
 	currentUserId := claims.Id
 	if !s.Store.IsUserAdmin(currentUserId) {
-		return echo.NewHTTPError(http.StatusUnauthorized, "current user has no admin privilege")
+		return echo.NewHTTPError(http.StatusUnauthorized, noAdminPrivilege)
 	}
 
 	newTree := &Tree{
@@ -107,7 +111,7 @@ func (s Service) Delete(ctx echo.Context, objectId int32) error {
 	// IF USER IS NOT ADMIN RETURN 401 Unauthorized
 	currentUserId := claims.Id
 	if !s.Store.IsUserAdmin(currentUserId) {
-		return echo.NewHTTPError(http.StatusUnauthorized, "current user has no admin privilege")
+		return echo.NewHTTPError(http.StatusUnauthorized, noAdminPrivilege)
 	}
 	if !s.Store.Exist(objectId) {
 		msg := fmt.Sprintf("Delete(%d) cannot delete this id, it does not exist !", objectId)
@@ -146,7 +150,7 @@ func (s Service) Update(ctx echo.Context, objectId int32) error {
 	// IF USER IS NOT ADMIN RETURN 401 Unauthorized
 	currentUserId := claims.Id
 	if !s.Store.IsUserAdmin(currentUserId) {
-		return echo.NewHTTPError(http.StatusUnauthorized, "current user has no admin privilege")
+		return echo.NewHTTPError(http.StatusUnauthorized, noAdminPrivilege)
 	}
 	if !s.Store.Exist(objectId) {
 		msg := fmt.Sprintf("Update(%d) cannot modify this id, it does not exist !", objectId)
